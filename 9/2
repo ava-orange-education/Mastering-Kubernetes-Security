@@ -1,0 +1,7 @@
+FROM gcr.io/distroless/static-debian12:nonroot@sha256:<verified-sha256-digest>
+
+COPY --chown=nonroot:nonroot app /app
+
+USER nonroot:nonroot
+
+ENTRYPOINT ["/app"]

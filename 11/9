@@ -1,0 +1,9 @@
+- rule: Shell Spawned in Container
+  desc: Detect shell execution inside running containers
+  condition: >
+    container and
+    proc.name in (bash, sh, zsh)
+  output: >
+    Shell spawned inside container (user=%user.name container=%container.name image=%container.image repository=%container.image.repository)
+  priority: WARNING
+  tags: [container, shell, execution, mitre_execution]

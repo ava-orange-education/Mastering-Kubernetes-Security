@@ -1,0 +1,40 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequirednonroot
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredNonRoot
+
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      code:
+        - engine: Rego
+          source:
+            version: "v1"
+            rego: |
+              package k8srequirednonroot
+
+              violation contains {"msg": msg} if {
+                input.review.kind.kind == "Pod"
+                not pod_runs_non_root
+                msg := "Pod must set spec.securityContext.runAsNonRoot to true"
+              }
+
+              pod_runs_non_root if {
+                input.review.object.spec.securityContext.runAsNonRoot == true
+              }
+
+---
+# Applies the above policy to Pods
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredNonRoot
+metadata:
+  name: enforce-nonroot
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]

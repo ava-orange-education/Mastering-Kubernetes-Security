@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-kubelet-risk
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: exec-sa
+  namespace: demo-kubelet-risk
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-exec
+  namespace: demo-kubelet-risk
+rules:
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-exec-binding
+  namespace: demo-kubelet-risk
+subjects:
+  - kind: ServiceAccount
+    name: exec-sa
+    namespace: demo-kubelet-risk
+roleRef:
+  kind: Role
+  name: pod-exec
+  apiGroup: rbac.authorization.k8s.io

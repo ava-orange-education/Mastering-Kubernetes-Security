@@ -1,0 +1,22 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: warn-missing-label
+spec:
+  validationActions:
+    - Warn
+    - Audit
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+
+  validations:
+    - expression: >-
+        has(object.metadata.labels) &&
+        'team' in object.metadata.labels &&
+        object.metadata.labels['team'] != ''
+      message: "Pod should include team label"

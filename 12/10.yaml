@@ -1,0 +1,49 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: app-gateway
+  namespace: app-ns
+spec:
+  gatewayClassName: istio
+
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: app.example.com
+
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: app-tls
+
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: app-route
+  namespace: app-ns
+spec:
+  parentRefs:
+    - name: app-gateway
+
+  hostnames:
+    - app.example.com
+
+  rules:
+    - backendRefs:
+        - name: app-service
+          port: 80
+---
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: app-ns
+spec:
+  mtls:
+    mode: STRICT

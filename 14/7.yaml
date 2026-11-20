@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: unexpected-cross-namespace-access
+  namespace: tenant-a
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: access-test
+          image: curlimages/curl:8.8.0
+          command:
+            - sh
+            - -c
+          args:
+            - curl -sS --connect-timeout 3 http://payment-api.tenant-b.svc.cluster.local || true

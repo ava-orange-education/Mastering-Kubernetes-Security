@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: explicit-user
+  namespace: app-ns
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+      securityContext:
+        runAsUser: 1000
+        runAsNonRoot: true

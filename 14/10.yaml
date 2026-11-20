@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: forensic-isolation
+  namespace: payments
+spec:
+  podSelector:
+    matchLabels:
+      incident: suspected
+  policyTypes:
+    - Ingress
+    - Egress

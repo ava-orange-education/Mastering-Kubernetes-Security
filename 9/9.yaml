@@ -1,0 +1,43 @@
+apiVersion: policies.kyverno.io/v1
+kind: NamespacedImageValidatingPolicy
+metadata:
+  name: prod-image-trust
+  namespace: production
+spec:
+  validationActions:
+    - Deny
+
+  failurePolicy: Fail
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - pods
+
+  matchImageReferences:
+    - glob: "ghcr.io/example-org/*"
+
+  attestors:
+    - name: productionCI
+      cosign:
+        keyless:
+          identities:
+            - issuer: "https://token.actions.githubusercontent.com"
+              subject: "https://github.com/example-org/prod-repo/.github/workflows/release.yml@refs/heads/main"
+
+  validations:
+    - expression: >
+        images.containers
+          .map(image,
+            verifyImageSignatures(
+              image,
+              [attestors.productionCI]
+            )
+          )
+          .all(result, result > 0)
+      message: "Production images must be signed by the approved production CI workflow."

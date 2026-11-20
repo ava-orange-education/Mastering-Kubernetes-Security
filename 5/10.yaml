@@ -1,0 +1,24 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: require-nonroot
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  validations:
+  - expression: "has(object.spec.securityContext) && object.spec.securityContext.runAsNonRoot == true"
+    message: "Pods must set runAsNonRoot to true"
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: require-nonroot-binding
+spec:
+  policyName: require-nonroot
+  validationActions:
+    - Deny

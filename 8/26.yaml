@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sensitive-workload
+  namespace: sensitive
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: example.com.node-restriction.kubernetes.io/security-tier
+                operator: In
+                values:
+                  - hardened
+
+  containers:
+    - name: app
+      image: nginx:1.27

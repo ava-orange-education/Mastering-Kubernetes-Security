@@ -1,0 +1,53 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: quarantine-flagged-pods
+  namespace: payments
+spec:
+  podSelector:
+    matchLabels:
+      quarantine: "true"
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: policies.kyverno.io/v1
+kind: NamespacedMutatingPolicy
+metadata:
+  name: auto-quarantine
+  namespace: payments
+spec:
+  evaluation:
+    admission:
+      enabled: true
+    mutateExisting:
+      enabled: false
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - pods
+
+  matchConditions:
+    - name: confirmed-incident
+      expression: >-
+        object.metadata.?labels["incident"].orValue("") == "confirmed"
+
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >-
+          Object{
+            metadata: Object.metadata{
+              labels: {
+                "quarantine": "true"
+              }
+            }
+          }

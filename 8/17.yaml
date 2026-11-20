@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: write-attempt
+  namespace: app-ns
+spec:
+  containers:
+    - name: app
+      image: busybox
+      securityContext:
+        readOnlyRootFilesystem: true
+      command:
+        - sh
+        - -c
+        - echo "malicious" > /tmp/hack.txt

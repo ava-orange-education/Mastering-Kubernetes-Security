@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-secret
+  namespace: app-ns
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+      volumeMounts:
+        - name: db-secret-volume
+          mountPath: /etc/secrets
+          readOnly: true
+  volumes:
+    - name: db-secret-volume
+      secret:
+        secretName: db-credentials

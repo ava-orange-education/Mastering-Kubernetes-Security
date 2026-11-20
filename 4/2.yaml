@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bootstrap-token-123456
+  namespace: kube-system
+type: bootstrap.kubernetes.io/token
+stringData:
+  token-id: "123456"
+  token-secret: "abcdef0123456789"
+  usage-bootstrap-authentication: "true"
+  usage-bootstrap-signing: "true"
+  auth-extra-groups: system:bootstrappers
+  expiration: "2026-12-31T23:59:59Z" 

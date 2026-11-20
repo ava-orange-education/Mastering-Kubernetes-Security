@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pod-validator
+  namespace: webhook-system
+spec:
+  selector:
+    app: pod-validator
+  ports:
+    - name: https
+      port: 443
+      targetPort: 8443
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-validator
+  namespace: webhook-system
+  labels:
+    app: pod-validator
+spec:
+  containers:
+    - name: webhook
+      image: registry.example.com/security/pod-validator@sha256:<verified-image-digest>
+      ports:
+        - containerPort: 8443
+      volumeMounts:
+        - name: tls-certs
+          mountPath: /tls
+          readOnly: true
+      args:
+        - --tls-cert-file=/tls/tls.crt
+        - --tls-private-key-file=/tls/tls.key
+  volumes:
+    - name: tls-certs
+      secret:
+        secretName: webhook-tls

@@ -1,0 +1,26 @@
+apiVersion: policies.kyverno.io/v1
+kind: NamespacedValidatingPolicy
+metadata:
+  name: prod-only-restrictions
+  namespace: production
+spec:
+  validationActions:
+    - Deny
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+
+  validations:
+    - expression: >-
+        object.spec.?securityContext.?runAsNonRoot.orValue(false)
+      message: "Production workloads must run as non-root"
+
+    - expression: >-
+        object.spec.containers.all(container,
+          container.?securityContext.?allowPrivilegeEscalation.orValue(true) == false
+        )
+      message: "Production containers must disable privilege escalation"

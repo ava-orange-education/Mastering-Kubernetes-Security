@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: security-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: security.rules
+      rules:
+        - alert: ExcessiveAuthFailures
+          expr: sum(increase(apiserver_request_total{code="401"}[5m])) > 50
+          for: 5m
+          labels:
+            severity: warning
+            category: authentication
+          annotations:
+            summary: "High number of Kubernetes API authentication failures"
+            description: "More than 50 API authentication failures were observed in the last 5 minutes for at least 5 minutes. This may indicate invalid credentials, expired tokens, broken automation, or a brute force attempt."

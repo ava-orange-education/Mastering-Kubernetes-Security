@@ -1,0 +1,27 @@
+# Original Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+  namespace: app-ns
+type: Opaque
+stringData:
+  username: admin
+  password: supersecret
+
+# Encrypt the Secret Using kubeseal
+kubeseal \
+  --controller-namespace kube-system \
+  --controller-name sealed-secrets \
+  --format yaml < secret.yaml > sealed-secret.yaml
+
+# Generated SealedSecret
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: db-credentials
+  namespace: app-ns
+spec:
+  encryptedData:
+    username: AgBy...
+    password: AgCx...

@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: payments-backend
+  namespace: payments
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: payments-secret-reader
+  namespace: payments
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["db-credentials"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: payments-binding
+  namespace: payments
+subjects:
+  - kind: ServiceAccount
+    name: payments-backend
+roleRef:
+  kind: Role
+  name: payments-secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: payments-api
+  namespace: payments
+spec:
+  serviceAccountName: payments-backend
+  containers:
+    - name: app
+      image: nginx:1.27

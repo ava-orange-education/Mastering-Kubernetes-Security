@@ -1,0 +1,36 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: block-sensitive-configmaps
+spec:
+  validationActions:
+    - Deny
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - configmaps
+
+  validations:
+    - expression: >
+        !object.?data.orValue({}).exists(k,
+          k.lowerAscii().contains("password") ||
+          k.lowerAscii().contains("secret") ||
+          k.lowerAscii().contains("token"))
+      message: >
+        ConfigMap data keys must not contain password,
+        secret, or token.
+
+    - expression: >
+        !object.?binaryData.orValue({}).exists(k,
+          k.lowerAscii().contains("password") ||
+          k.lowerAscii().contains("secret") ||
+          k.lowerAscii().contains("token"))
+      message: >
+        ConfigMap binaryData keys must not contain password,
+        secret, or token.

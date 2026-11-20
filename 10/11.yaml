@@ -1,0 +1,17 @@
+apiVersion: apiserver.config.k8s.io/v1
+kind: EncryptionConfiguration
+resources:
+  - resources:
+      - secrets
+    providers:
+      - kms:
+          apiVersion: v2
+          name: external-kms
+          endpoint: unix:///var/run/kms-provider.sock
+          timeout: 3s
+
+      # Retain a previous provider only during migration.
+      - secretbox:
+          keys:
+            - name: previous-key
+              secret: <PREVIOUS_BASE64_KEY>

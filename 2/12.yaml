@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-risk
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+      volumeMounts:
+        - mountPath: /host
+          name: host-volume
+          readOnly: false
+  volumes:
+    - name: host-volume
+      hostPath:
+        path: /
+        type: Directory

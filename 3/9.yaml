@@ -1,0 +1,21 @@
+apiVersion: audit.k8s.io/v1
+kind: Policy
+omitStages:
+  - RequestReceived
+rules:
+  - level: Metadata
+    resources:
+      - group: ""
+        resources:
+          - secrets
+
+  - level: Request
+    resources:
+      - group: "rbac.authorization.k8s.io"
+        resources:
+          - roles
+          - rolebindings
+          - clusterroles
+          - clusterrolebindings
+
+  - level: Metadata

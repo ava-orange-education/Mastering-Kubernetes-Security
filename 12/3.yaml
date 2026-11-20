@@ -1,0 +1,10 @@
+containers:
+  - name: controller
+    image: public.ecr.aws/eks/aws-load-balancer-controller:<tested-version>@sha256:<verified-digest>
+    securityContext:
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
