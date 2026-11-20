@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: conflicting-context
+  namespace: app-ns
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+    - name: app
+      image: nginx:1.27
+      securityContext:
+        runAsUser: 0

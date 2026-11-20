@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app
+  namespace: app-ns
+  labels:
+    dns-monitoring: "enabled"
+    observability: "dns-tracked"
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27

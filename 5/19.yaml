@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: unsafe-image
+  namespace: baseline-ns
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+    - name: app
+      image: unknown.registry/example:latest
+      securityContext:
+        allowPrivilegeEscalation: false

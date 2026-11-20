@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deploy-job
+  namespace: ci
+  labels:
+    pipeline: production
+    triggered-by: github-actions
+spec:
+  template:
+    metadata:
+      labels:
+        pipeline: production
+        triggered-by: github-actions
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: deploy
+          image: registry.example.com/platform/kubectl@sha256:<verified-kubectl-image-digest>
+          command: ["sh", "-c", "echo 'Deployment job metadata recorded' && sleep 5"]

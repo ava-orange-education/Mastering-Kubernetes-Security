@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: system-component
+  namespace: kube-system
+  labels:
+    managed-by: gitops
+    monitoring: enabled
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: system-component
+  template:
+    metadata:
+      labels:
+        app: system-component
+        managed-by: gitops
+        monitoring: enabled
+    spec:
+      containers:
+        - name: component
+          image: busybox
+          command: ["sh", "-c", "sleep 3600"]

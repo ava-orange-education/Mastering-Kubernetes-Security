@@ -1,0 +1,42 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: prod-require-non-root
+spec:
+  validationActions:
+    - Deny
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    namespaceSelector:
+      matchLabels:
+        environment: production
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  variables:
+    - name: containers
+      expression: >-
+        object.spec.containers +
+        object.spec.?initContainers.orValue([]) +
+        object.spec.?ephemeralContainers.orValue([])
+  validations:
+    - expression: >-
+        (
+          object.spec.?securityContext.?runAsNonRoot.orValue(false) == true &&
+          variables.containers.all(
+            c,
+            c.?securityContext.?runAsNonRoot.orValue(true) == true
+          )
+        ) ||
+        variables.containers.all(
+          c,
+          c.?securityContext.?runAsNonRoot.orValue(false) == true
+        )
+      message: >-
+        Production workloads must set runAsNonRoot to true at the Pod
+        level without a container override, or for every regular, init,
+        and ephemeral container.

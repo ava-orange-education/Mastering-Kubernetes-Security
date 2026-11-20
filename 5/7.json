@@ -1,0 +1,12 @@
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  "response": {
+    "uid": "<copy-request-uid-here>",
+    "allowed": false,
+    "status": {
+      "code": 403,
+      "message": "Privileged containers are not allowed."
+    }
+  }
+}

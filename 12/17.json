@@ -1,0 +1,15 @@
+{
+  "terminatingRuleId": "SQLiProtection",
+  "terminatingRuleType": "REGULAR",
+  "action": "BLOCK",
+  "terminatingRuleMatchDetails": [
+    {
+      "conditionType": "SQL_INJECTION",
+      "location": "QUERY_STRING"
+    }
+  ],
+  "httpRequest": {
+    "httpMethod": "GET",
+    "uri": "/search"
+  }
+}

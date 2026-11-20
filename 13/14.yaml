@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Config
+clusters:
+  - name: dev-cluster
+    cluster:
+      server: https://dev-api.example.com
+  - name: prod-cluster
+    cluster:
+      server: https://prod-api.example.com
+contexts:
+  - name: dev
+    context:
+      cluster: dev-cluster
+      user: dev-admin
+  - name: prod
+    context:
+      cluster: prod-cluster
+      user: prod-admin
+current-context: dev

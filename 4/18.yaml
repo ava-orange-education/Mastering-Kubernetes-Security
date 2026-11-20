@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: impersonate-debug-sa
+  namespace: demo-impersonation
+rules:
+  - apiGroups: [""]
+    resources: ["serviceaccounts"]
+    resourceNames: ["debug-sa"]
+    verbs: ["impersonate"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: allow-debug-sa-impersonation
+  namespace: demo-impersonation
+subjects:
+  - kind: User
+    name: alice
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: impersonate-debug-sa
+  apiGroup: rbac.authorization.k8s.io

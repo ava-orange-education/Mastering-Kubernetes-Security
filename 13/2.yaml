@@ -1,0 +1,40 @@
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: tenant-a-pool
+spec:
+  template:
+    metadata:
+      labels:
+        tenant: a
+    spec:
+      taints:
+        - key: tenant
+          value: a
+          effect: NoSchedule
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values:
+            - amd64
+        - key: kubernetes.io/os
+          operator: In
+          values:
+            - linux
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tenant-a-app
+  namespace: tenant-a
+spec:
+  nodeSelector:
+    tenant: a
+  tolerations:
+    - key: tenant
+      operator: Equal
+      value: a
+      effect: NoSchedule
+  containers:
+    - name: app
+      image: nginx:1.27

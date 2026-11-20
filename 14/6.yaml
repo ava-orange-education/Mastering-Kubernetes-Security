@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: network-ids
+  namespace: security
+spec:
+  selector:
+    matchLabels:
+      app: network-ids
+  template:
+    metadata:
+      labels:
+        app: network-ids
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: ids
+          image: example-registry.local/security/network-ids:1.0
+          args:
+            - "--config=/etc/ids/ids.yaml"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+                - NET_ADMIN
+                - NET_RAW
+          volumeMounts:
+            - name: config
+              mountPath: /etc/ids
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: network-ids-config

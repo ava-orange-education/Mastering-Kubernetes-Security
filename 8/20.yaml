@@ -1,0 +1,19 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: csi-sc
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: csi-pvc
+  namespace: app-ns
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: csi-sc
+  resources:
+    requests:
+      storage: 10Gi

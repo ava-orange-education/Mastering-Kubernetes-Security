@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: image-build
+  namespace: ci
+spec:
+  ttlSecondsAfterFinished: 600
+
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: builder
+
+      containers:
+        - name: builder
+          image: moby/buildkit@sha256:<verified-buildkit-digest>
+
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"

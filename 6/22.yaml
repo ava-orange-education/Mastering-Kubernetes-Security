@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: restrict-sensitive-egress
+  namespace: sensitive-ns
+spec:
+  podSelector:
+    matchLabels:
+      role: sensitive
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 203.0.113.10/32
+      ports:
+        - protocol: TCP
+          port: 443

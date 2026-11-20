@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-partner-api
+  namespace: app-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: external-client
+
+  policyTypes:
+    - Egress
+
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 203.0.113.10/32
+
+      ports:
+        - protocol: TCP
+          port: 443

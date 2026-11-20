@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dns-test
+  namespace: demo-dns
+spec:
+  containers:
+    - name: tester
+      image: busybox
+      command: ["sh", "-c", "nslookup kubernetes.default"]

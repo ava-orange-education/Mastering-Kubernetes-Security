@@ -1,0 +1,38 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: app-cert
+  namespace: app-ns
+spec:
+  secretName: app-tls
+
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+
+  dnsNames:
+    - app.example.com
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: app-gateway
+  namespace: app-ns
+spec:
+  gatewayClassName: example-gateway-class
+
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: app.example.com
+
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: app-tls
+
+      allowedRoutes:
+        namespaces:
+          from: Same

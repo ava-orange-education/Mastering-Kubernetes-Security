@@ -1,0 +1,7 @@
+FROM alpine:3.19
+RUN addgroup -S app && adduser -S app -G app
+WORKDIR /app
+COPY app /app/app
+RUN chown -R app:app /app
+USER app:app
+CMD ["/app/app"]

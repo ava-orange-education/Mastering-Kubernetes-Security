@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: etcd-backup
+  namespace: kube-system
+spec:
+  template:
+    spec:
+      containers:
+        - name: backup
+          image: quay.io/coreos/etcd
+          command:
+            - etcdctl
+            - snapshot
+            - save
+            - /backup/etcd.db
+          volumeMounts:
+            - name: backup-vol
+              mountPath: /backup
+      volumes:
+        - name: backup-vol
+          persistentVolumeClaim:
+            claimName: encrypted-backup-pvc
+      restartPolicy: OnFailure

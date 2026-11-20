@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: net-test
+  namespace: app-ns
+spec:
+  restartPolicy: Never
+  containers:
+    - name: netshoot
+      image: registry.example.com/debug/netshoot:<tested-version>
+      command: ["sleep", "3600"]

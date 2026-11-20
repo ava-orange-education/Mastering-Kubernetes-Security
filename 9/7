@@ -1,0 +1,8 @@
+FROM alpine:3.19
+WORKDIR /app
+COPY . /app
+CMD ["sh"]
+
+# Example of sensitive file in build context
+.env
+EXAMPLE_API_TOKEN=example-only-do-not-use

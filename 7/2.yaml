@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ambient-app
+  labels:
+    istio.io/dataplane-mode: ambient
+---
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: require-mtls
+  namespace: ambient-app
+spec:
+  mtls:
+    mode: STRICT

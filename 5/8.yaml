@@ -1,0 +1,24 @@
+#Pod submitted by user
+apiVersion: v1
+kind: Pod
+metadata:
+  name: user-pod
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+---
+# Pod after mutation
+apiVersion: v1
+kind: Pod
+metadata:
+  name: user-pod
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+    - name: app
+      image: nginx:1.27
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true

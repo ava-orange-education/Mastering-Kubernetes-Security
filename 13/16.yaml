@@ -1,0 +1,30 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: cluster-b-gateway
+  namespace: shared
+spec:
+  gatewayClassName: external-gateway
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: api.cluster-b.example
+      tls:
+        certificateRefs:
+          - name: cluster-b-tls
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: api-service-route
+  namespace: shared
+spec:
+  parentRefs:
+    - name: cluster-b-gateway
+  hostnames:
+    - api.cluster-b.example
+  rules:
+    - backendRefs:
+        - name: api-service
+          port: 80

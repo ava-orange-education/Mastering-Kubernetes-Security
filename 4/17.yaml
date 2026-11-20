@@ -1,0 +1,32 @@
+#API Server configuration
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-apiserver
+  namespace: kube-system
+spec:
+  containers:
+    - name: kube-apiserver
+      image: registry.k8s.io/kube-apiserver:v1.36.0
+      command:
+        - kube-apiserver
+        - --authorization-mode=Node,RBAC,Webhook
+        - --authorization-webhook-config-file=/etc/kubernetes/authz-webhook.yaml
+        - --authorization-webhook-cache-authorized-ttl=5m
+        - --authorization-webhook-cache-unauthorized-ttl=30s
+---
+#Webhook configuration file
+apiVersion: v1
+kind: Config
+clusters:
+- name: authz-webhook
+  cluster:
+    server: https://authz.example.com/authorize
+users:
+- name: webhook-client
+contexts:
+- context:
+    cluster: authz-webhook
+    user: webhook-client
+  name: webhook
+current-context: webhook

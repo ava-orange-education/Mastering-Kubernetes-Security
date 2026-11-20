@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: layered-ns
+  labels:
+    pod-security.kubernetes.io/enforce: baseline
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: require-team-label
+spec:
+  validationActions:
+    - Deny
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+
+  validations:
+    - expression: >-
+        has(object.metadata.labels) &&
+        'team' in object.metadata.labels &&
+        object.metadata.labels['team'] != ''
+      message: "Pod must include team label"

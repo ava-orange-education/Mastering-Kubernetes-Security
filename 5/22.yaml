@@ -1,0 +1,27 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: allow-approved-registries
+spec:
+  validationActions:
+    - Deny
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+
+  variables:
+    - name: allContainers
+      expression: >-
+        object.spec.containers +
+        object.spec.?initContainers.orValue([])
+
+  validations:
+    - expression: >-
+        variables.allContainers.all(container,
+          container.image.startsWith("registry.example.com/")
+        )
+      message: "Images must be pulled from registry.example.com"

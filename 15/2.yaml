@@ -1,0 +1,13 @@
+apiVersion: audit.k8s.io/v1
+kind: Policy
+omitStages:
+  - RequestReceived
+rules:
+  - level: Metadata
+    namespaces:
+      - healthcare
+    resources:
+      - group: ""
+        resources:
+          - secrets
+          - pods

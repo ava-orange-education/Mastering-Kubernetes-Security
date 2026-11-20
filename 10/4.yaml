@@ -1,0 +1,14 @@
+apiVersion: apiserver.config.k8s.io/v1
+kind: EncryptionConfiguration
+resources:
+  - resources:
+      - secrets
+    providers:
+      - secretbox:
+          keys:
+            - name: key1
+              secret: <BASE64_ENCODED_32_BYTE_KEY>
+
+      # Keep only during migration from previously
+      # unencrypted Secret data.
+      - identity: {}

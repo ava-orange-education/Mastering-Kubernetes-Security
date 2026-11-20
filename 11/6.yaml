@@ -1,0 +1,28 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: restrict-image-registries
+spec:
+  failurePolicy: Fail
+  validationActions:
+    - Deny
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  variables:
+    - name: registries
+      expression: >-
+        object.spec.containers.map(c, image(c.image).registry()) +
+        object.spec.?initContainers.orValue([]).map(c, image(c.image).registry()) +
+        object.spec.?ephemeralContainers.orValue([]).map(c, image(c.image).registry())
+  validations:
+    - expression: >-
+        variables.registries.all(
+          registry,
+          registry == "registry.example.com"
+        )
+      message: >-
+        All container images must come from registry.example.com.

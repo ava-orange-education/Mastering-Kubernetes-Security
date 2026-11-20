@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: immutable-image
+  namespace: app-ns
+spec:
+  containers:
+    - name: app
+      image: registry.example.com/app@sha256:<64-character-sha256-digest>

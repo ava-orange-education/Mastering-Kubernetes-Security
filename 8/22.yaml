@@ -1,0 +1,27 @@
+# Create the profile (for example, /etc/apparmor.d/my-profile):
+#include <tunables/global>
+
+profile k8s-apparmor-example-deny-write flags=(attach_disconnected) {
+  #include <abstractions/base>
+  file,
+  deny /** w,
+}
+
+# Load the profile
+sudo apparmor_parser -r /etc/apparmor.d/k8s-apparmor-example-deny-write
+# Pod definition
+apiVersion: v1
+kind: Pod
+metadata:
+  name: apparmor-example
+  namespace: app-ns
+spec:
+  securityContext:
+    appArmorProfile:
+      type: Localhost
+      localhostProfile: k8s-apparmor-example-deny-write
+
+  containers:
+    - name: app
+      image: busybox:1.37
+      command: ["sh", "-c", "echo 'AppArmor enabled' && sleep 3600"]

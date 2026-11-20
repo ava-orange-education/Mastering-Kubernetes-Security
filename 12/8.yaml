@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: reencrypt-ingress
+  namespace: app-ns
+  annotations:
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:123456789012:certificate/abcd1234-5678-90ef-ghij-klmnopqrstuv
+    alb.ingress.kubernetes.io/backend-protocol: HTTPS
+spec:
+  ingressClassName: alb
+  rules:
+    - host: secure.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: secure-backend
+                port:
+                  number: 443

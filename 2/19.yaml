@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-sa
+  namespace: demo-identity
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app
+  namespace: demo-identity
+spec:
+  serviceAccountName: app-sa
+  containers:
+    - name: app
+      image: nginx:1.27

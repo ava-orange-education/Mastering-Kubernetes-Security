@@ -1,0 +1,35 @@
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: jwt-auth
+  namespace: api-ns
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: api-gateway
+
+  jwtRules:
+    - issuer: "https://issuer.example.com"
+      jwksUri: "https://issuer.example.com/.well-known/jwks.json"
+      audiences:
+        - api-clients
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: require-jwt
+  namespace: api-ns
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: api-gateway
+
+  action: ALLOW
+
+  rules:
+    - from:
+        - source:
+            requestPrincipals:
+              - "*"

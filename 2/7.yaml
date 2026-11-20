@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-scheduler-security
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sensitive-workload
+  namespace: demo-scheduler-security
+spec:
+  nodeSelector:
+    security-tier: sensitive
+  containers:
+    - name: app
+      image: nginx:1.27
